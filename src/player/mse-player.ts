@@ -95,6 +95,9 @@ export default class MSEPlayer {
   public attachMedia(media: HTMLMediaElement): void {
     this.unload();
     this.media = media;
+    this.media.addEventListener('error', (event) => {
+      console.error("Media element error: ", this.media?.error?.message);
+    });
     if (this.mediaSourceUrl) { this.media.src = this.mediaSourceUrl; }
   }
 
@@ -108,7 +111,9 @@ export default class MSEPlayer {
     }
     this.initData.set(payload.adaptation_id, initData);
 
-    const sourceBuffer = this.mediaSource.addSourceBuffer(`video/mp4; codecs="${initData.map(init => init.codec.identifier).join(',')}"`);
+    let codecs: string = `${initData.map(init => init.codec.identifier).join(',')}`
+    console.log(`codecs:::::${codecs}`)
+    const sourceBuffer = this.mediaSource.addSourceBuffer(`video/mp4; codecs="${codecs}"`);
     const sourceBufferQueue = new SourceBufferQueue(sourceBuffer);
     this.sourceBufferQueue.set(payload.adaptation_id, sourceBufferQueue);
 

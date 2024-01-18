@@ -5,7 +5,8 @@ import { EventTypes } from '../event/events'
 import Source from "./source";
 
 
-export default class HTTPStreamingWindowSource extends Source{  
+export default class HTTPStreamingWindowSource extends Source {
+  private protocol: string = 'flv-main'
   private socket: WebSocket | null = null;
   private abortController: AbortController | null = null;
 
@@ -19,8 +20,9 @@ export default class HTTPStreamingWindowSource extends Source{
   private emsg: ArrayBuffer[] = [];
   private moof: Uint8Array | null = null;
 
-  public constructor() {
+  public constructor(protocol: string) {
     super();
+    this.protocol = protocol
   }
 
   static isSupported () {
@@ -51,7 +53,7 @@ export default class HTTPStreamingWindowSource extends Source{
     }
 
     try {
-      this.socket = new WebSocket(url);
+      this.socket = new WebSocket(url, this.protocol);
       this.socket.addEventListener('error', this.onErrorHandler)
       this.socket.addEventListener('message', this.onMessageHandler);
 
