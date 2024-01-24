@@ -5,6 +5,7 @@ import { Events, EventTypes } from '../event/events';
 import { HTTPStreamingWindowSource } from '../index';
 import Source from '../source/source';
 import { PlayerOption } from './option';
+import LiveLatencySynchronizer from './live-latency-synchronizer';
 
 class SourceBufferQueue {
   private queue: ArrayBuffer[] = [];
@@ -50,6 +51,8 @@ export default class MSEPlayer {
   private baseTime: number | null = null;
   private baseTimeSyncType: 'vide' | 'soun';
 
+  private liveLatencySynchronizer: LiveLatencySynchronizer | null = null;
+
   private readonly onInitSegmentRecievedHandler = this.onInitSegmentRecieved.bind(this);
   private readonly onFragmentRecievedHandler = this.onFragmentRecieved.bind(this);
 
@@ -68,6 +71,8 @@ export default class MSEPlayer {
     this.mediaSource = new MediaSource();
     this.mediaSourceUrl = URL.createObjectURL(this.mediaSource);
     this.attachMedia(this.media);
+
+    this.liveLatencySynchronizer = new LiveLatencySynchronizer(this.media)
 
     const isOpened = await new Promise((resolve) => {
       if (this.mediaSource == null) { return resolve(false); }
@@ -112,7 +117,8 @@ export default class MSEPlayer {
     this.initData.set(payload.adaptation_id, initData);
 
     let codecs: string = `${initData.map(init => init.codec.identifier).join(',')}`
-    console.log(`codecs:::::${codecs}`)
+    // console.log(`codecs:::::${codecs}`)
+
     const sourceBuffer = this.mediaSource.addSourceBuffer(`video/mp4; codecs="${codecs}"`);
     const sourceBufferQueue = new SourceBufferQueue(sourceBuffer);
     this.sourceBufferQueue.set(payload.adaptation_id, sourceBufferQueue);
@@ -169,6 +175,7 @@ export default class MSEPlayer {
   }
 
   private unload() {
+    this.liveLatencySynchronizer?.destroy()
     this.media?.removeAttribute('src');
     this.media?.load();
   }
