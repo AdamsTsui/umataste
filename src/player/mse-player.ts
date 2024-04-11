@@ -72,7 +72,7 @@ export default class MSEPlayer {
     this.mediaSourceUrl = URL.createObjectURL(this.mediaSource);
     this.attachMedia(this.media);
 
-    this.liveLatencySynchronizer = new LiveLatencySynchronizer(this.media)
+    // this.liveLatencySynchronizer = new LiveLatencySynchronizer(this.media)
 
     const isOpened = await new Promise((resolve) => {
       if (this.mediaSource == null) { return resolve(false); }

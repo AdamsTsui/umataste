@@ -45,7 +45,7 @@ class LiveLatencySynchronizer {
             return;
         }
 
-        let latency: number = 0
+        /*let latency: number = 0
         const buffered = this._media_element.buffered;
         const current_time = this._media_element.currentTime;
 
@@ -56,19 +56,19 @@ class LiveLatencySynchronizer {
         const buffered_end = buffered.end(buffered.length - 1);
         latency =  buffered_end - current_time;
 
-        if (latency > 0.5) {
+        if (latency > 0.8) {
             this._media_element.currentTime = buffered_end;
-        }
+        }*/
 
-        /*const latency = this._getCurrentLatency();
+        const latency = this._getCurrentLatency();
 
-        if (latency > 0.5) {
-            this._media_element.playbackRate = 5;
-        } else if (latency > 0.2) {
+        if (latency > 2) {
+            this._media_element.playbackRate = 2;
+        } else if (latency > 0.8) {
             // do nothing, keep playbackRate
         } else if (this._media_element.playbackRate !== 1 && this._media_element.playbackRate !== 0) {
             this._media_element.playbackRate = 1;
-        }*/
+        }
     }
 
     private _getCurrentLatency(): number {
